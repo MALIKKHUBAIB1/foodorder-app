@@ -1,7 +1,12 @@
-import React from "react";
+import React, { useContext } from "react";
 import Button from "../UI/Button";
-function MealsItem({ meal, addMeals, }) {
-  // console.log(addMeals);
+import CartContext from "../Store/CartContex";
+function MealsItem({ meal }) {
+  const cartCtx = useContext(CartContext);
+  function handleAddMealtoCart() {
+    cartCtx.addItem(meal);
+    // console.log(meal);
+  }
   return (
     <li className="meal-item">
       <article>
@@ -12,7 +17,7 @@ function MealsItem({ meal, addMeals, }) {
           <p className="meal-item-description">{meal.description}</p>
         </div>
         <p className="meal-item-actions">
-          <Button textOnly={false} onClick={() => addMeals(meal.id)}>
+          <Button textOnly={false} onClick={handleAddMealtoCart}>
             Add to Cart
           </Button>
         </p>

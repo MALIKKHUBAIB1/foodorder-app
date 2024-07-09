@@ -1,50 +1,53 @@
-import React from "react";
-import { forwardRef } from "react";
+import { useContext } from "react";
 import Button from "../UI/Button";
-import Modal from "./Modal";
+import Modal from "../UI/Modal";
+import CartContext from "../Store/CartContex";
+import UserProgressContext from "../Store/userProgressContex";
 import CartItem from "./CartItem";
-const cartRef = forwardRef(function Cart(
-  {
-    cartItems,
-    incrementQuantity,
-    totalPrice,
-    decrementQuantity,
-    closeModalHandle,
-  },
-  ref
-) {
-  // if (cartItems) {
-  //   return <p>Your Cart is Emptyy</p>;
-  // }
+
+function Cart() {
+  const cartCtx = useContext(CartContext);
+  const totalCartPrice = cartCtx.items.reduce((totalPrice, item) => {
+    return totalPrice + item.quantity * item.price;
+  }, 0);
+  const cartProgressCtx = useContext(UserProgressContext);
+  const closeCartHandler = () => {
+    cartProgressCtx.hideCart();
+  };
+  function showCheckoutHandler() {
+    cartProgressCtx.showCheckout();
+  }
   return (
-    <Modal className="cart" ref={ref}>
+    <Modal
+      className="cart"
+      open={cartProgressCtx.progress === "cart"}
+      onClose={cartProgressCtx.progress === "cart" ? closeCartHandler : null}
+    >
       <h2>Your Cart</h2>
       <ul>
-        {cartItems.map((item) => {
-          // console.log(item.name);
+        {cartCtx.items.map((item) => {
           if (!item) return null;
           return (
             <CartItem
+              item={item}
               key={item.id}
-              name={item.name}
-              qty={item.quantity}
-              incrementQuantity={incrementQuantity}
-              id={item.id}
-              totalPrice={item.totalPrice}
-              decrementQuantity={decrementQuantity}
+              onIncrease={() => cartCtx.addItem(item)}
+              onDecrease={() => cartCtx.removeItem(item.id)}
             />
           );
         })}
       </ul>
-      <p className="cart-total">total Price - {totalPrice.toFixed(2)}</p>
+      <p className="cart-total">$ {+totalCartPrice.toFixed(2)}</p>
       <p className="modal-action">
-        <Button textOnly onClick={closeModalHandle}>
+        <Button textOnly onClick={closeCartHandler}>
           CLOSE
         </Button>
-        <Button>GO to checkout</Button>
+        {cartCtx.items.length > 0 && (
+          <Button onClick={showCheckoutHandler}>GO to checkout</Button>
+        )}
       </p>
     </Modal>
   );
-});
+}
 
-export default cartRef;
+export default Cart;

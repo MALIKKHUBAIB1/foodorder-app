@@ -1,31 +1,17 @@
-import React, { useState, useEffect } from "react";
-
-function CartItem({ name, qty, incrementQuantity, id, decrementQuantity }) {
-  const [btndisabled, setBtnDisabled] = useState(false);
-  useEffect(() => {
-    if (qty <= 0) {
-      setBtnDisabled(true);
-    } else {
-      setBtnDisabled(false);
-    }
-  }, [qty]);
+import React, { useContext } from "react";
+function CartItem({ item, onDecrease, onIncrease }) {
+  const { name, price, quantity } = item;
+  const newPrice = +price;
   return (
     <li className="cart-item">
-      <p>{name} </p>
-      <p className="cart-item-actions">
-        <button
-          onClick={() => {
-            incrementQuantity(id);
-          }}
-        >
-          +
-        </button>
-        <span>{qty}</span>
-        <button onClick={() => decrementQuantity(id)} disabled={btndisabled}>
-          -
-        </button>
+      <p>
+        {name} - {quantity} x ${newPrice.toFixed(2)}
       </p>
-      {/* <p className="cart-total">total Price - {totalPrice}</p> */}
+      <p className="cart-item-actions">
+        <button onClick={onIncrease}>+</button>
+        <span>{quantity}</span>
+        <button onClick={onDecrease}>-</button>
+      </p>
     </li>
   );
 }

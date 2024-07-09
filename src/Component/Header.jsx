@@ -1,45 +1,32 @@
-import React, { useRef } from "react";
+import { useContext } from "react";
 import logo from "../assets/logo.jpg";
-import Modal from "./Modal";
 import Button from "../UI/Button";
-import Cart from "./Cart";
+import CartContext from "../Store/CartContex";
+import UserProgressContext from "../Store/userProgressContex";
+function Header() {
+  const cartCtx = useContext(CartContext);
+  const totalCartItems = cartCtx.items.reduce((totalNumber, item) => {
+    return totalNumber + item.quantity;
+  }, 0);
 
-function Header({
-  addtoCart,
-  cartItems,
-  incrementQuantity,
-  quantityItems,
-  totalPrice,
-  decrementQuantity,
-}) {
-  const modal = useRef();
-  function openModalHandle() {
-    modal.current.open();
+  const userProgressCtx = useContext(UserProgressContext);
+
+  function handleShowCart() {
+    userProgressCtx.showCart();
   }
-  function closeModalHandle() {
-    modal.current.close();
-  }
+
   return (
-    <>
-      <Cart
-        ref={modal}
-        addtoCart={addtoCart}
-        cartItems={cartItems}
-        incrementQuantity={incrementQuantity}
-        quantityItems={quantityItems}
-        totalPrice={totalPrice}
-        decrementQuantity={decrementQuantity}
-        closeModalHandle={closeModalHandle}
-      />
-      <header id="main-header">
-        <div id="title">
-          <img src={logo} alt="Logo" /> <h1>REACTFOOD</h1>
-        </div>
-        <Button textOnly onClick={openModalHandle}>
-          Cart (0)
+    <header id="main-header">
+      <div id="title">
+        <img src={logo} alt="Logo" />
+        <h1>REACTFOOD</h1>
+      </div>
+      <nav>
+        <Button textOnly onClick={handleShowCart}>
+          Cart ({totalCartItems})
         </Button>
-      </header>
-    </>
+      </nav>
+    </header>
   );
 }
 
